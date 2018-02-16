@@ -1,20 +1,10 @@
 {
-  "stage": 0,
-  "optional": [],
-  "env": {
-    "development": {
-      "plugins": ["react-transform"],
-      "extra": {
-        "react-transform": {
-          "transforms": [
-            {
-              "transform": "react-transform-hmr",
-              "imports": ["react"],
-              "locals": ["module"]
-            }
-          ]
-        }
-      }
-    }
-  }
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }
