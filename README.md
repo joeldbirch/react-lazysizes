@@ -1,5 +1,7 @@
 # React LazySizes
 
+### Update to 1.1.0 to use with latest react and prop-types
+
 LazySizes component for ReactJS base on [lazysizes](https://github.com/aFarkas/lazysizes)
 
 ## Installation
