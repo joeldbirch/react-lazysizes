@@ -1,11 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import invariant from 'invariant';
-import classnames from 'classnames';
-import propTypes from 'prop-types';
+import React from "react";
+import ReactDOM from "react-dom";
+import invariant from "invariant";
+import classnames from "classnames";
+import propTypes from "prop-types";
 
 const canUseDOM = !!(
-  typeof window !== 'undefined' &&
+  typeof window !== "undefined" &&
   window.document &&
   window.document.createElement
 );
@@ -13,7 +13,7 @@ const canUseDOM = !!(
 let lazySizes = null;
 
 if (canUseDOM) {
-  lazySizes = require('lazysizes');
+  lazySizes = require("lazysizes");
 }
 
 class LazySizes extends React.Component {
@@ -21,29 +21,47 @@ class LazySizes extends React.Component {
     src: propTypes.string,
     dataSizes: propTypes.string,
     dataSrc: propTypes.string,
-    dataSrcSet: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.array]),
+    dataSrcSet: propTypes.oneOfType([
+      propTypes.string,
+      propTypes.object,
+      propTypes.array,
+    ]),
     className: propTypes.string,
-    iframe: propTypes.bool
+    iframe: propTypes.bool,
   };
 
   static defaultProps = {
-    src: 'data:image/gif;base64,R0lGODdhEAAJAIAAAMLCwsLCwiwAAAAAEAAJAAACCoSPqcvtD6OclBUAOw==',
-    dataSizes: 'auto',
-    iframe: false
+    src:
+      "data:image/gif;base64,R0lGODdhEAAJAIAAAMLCwsLCwiwAAAAAEAAJAAACCoSPqcvtD6OclBUAOw==",
+    dataSizes: "auto",
+    iframe: false,
   };
 
-  componentWillMount = () => {
-    let {iframe, dataSrc} = this.props;
+  UNSAFE_componentWillMount = () => {
+    let { iframe, dataSrc } = this.props;
     if (iframe && !dataSrc) {
-      invariant(false, 'Prop dataSrc is required on iframe.');
+      invariant(false, "Prop dataSrc is required on iframe.");
     }
   };
 
-  componentWillUpdate = (nextProps) => {
+  UNSAFE_componentWillUpdate = (nextProps) => {
     let propsChanged = false;
-    for (let propName of ['src', 'dataSizes', 'dataSrc', 'dataSrcSet', 'className', 'iframe']) {
-      let prop = propName === 'dataSrcSet' ? this.handleSrcSet(this.props[propName]) : this.props[propName];
-      let nextProp = propName === 'dataSrcSet' ? this.handleSrcSet(nextProps[propName]) : nextProps[propName];
+    for (let propName of [
+      "src",
+      "dataSizes",
+      "dataSrc",
+      "dataSrcSet",
+      "className",
+      "iframe",
+    ]) {
+      let prop =
+        propName === "dataSrcSet"
+          ? this.handleSrcSet(this.props[propName])
+          : this.props[propName];
+      let nextProp =
+        propName === "dataSrcSet"
+          ? this.handleSrcSet(nextProps[propName])
+          : nextProps[propName];
       if (prop !== nextProp) {
         propsChanged = true;
         break;
@@ -51,62 +69,79 @@ class LazySizes extends React.Component {
     }
     if (propsChanged && lazySizes) {
       let lazyElement = ReactDOM.findDOMNode(this);
-      if (lazySizes.hC(lazyElement, 'lazyloaded')) {
-        lazySizes.rC(lazyElement, 'lazyloaded');
+      if (lazySizes.hC(lazyElement, "lazyloaded")) {
+        lazySizes.rC(lazyElement, "lazyloaded");
       }
     }
   };
 
-  componentDidUpdate = () => {
+  UNSAFE_componentDidUpdate = () => {
     if (!lazySizes) {
       return;
     }
     let lazyElement = ReactDOM.findDOMNode(this);
-    if (!lazySizes.hC(lazyElement, 'lazyloaded') && !lazySizes.hC(lazyElement, 'lazyload')) {
-      lazySizes.aC(lazyElement, 'lazyload');
+    if (
+      !lazySizes.hC(lazyElement, "lazyloaded") &&
+      !lazySizes.hC(lazyElement, "lazyload")
+    ) {
+      lazySizes.aC(lazyElement, "lazyload");
     }
   };
 
   handleSrcSet = (srcSet) => {
     let result = srcSet;
-    if (typeof srcSet === 'object') {
+    if (typeof srcSet === "object") {
       if (!Array.isArray(srcSet)) {
         result = [];
         for (let variant in srcSet) {
           if (srcSet.hasOwnProperty(variant)) {
             result.push({
               variant: variant,
-              src: srcSet[variant]
+              src: srcSet[variant],
             });
           }
         }
       }
-      result = result.map(item => {
-        return `${item.src} ${item.variant}`;
-      }).join(', ');
+      result = result
+        .map((item) => {
+          return `${item.src} ${item.variant}`;
+        })
+        .join(", ");
     }
     return result;
   };
 
   render() {
-    let {src, dataSizes, dataSrc, dataSrcSet, className, iframe, ...other} = this.props;
+    let {
+      src,
+      dataSizes,
+      dataSrc,
+      dataSrcSet,
+      className,
+      iframe,
+      ...other
+    } = this.props;
     dataSrcSet = this.handleSrcSet(dataSrcSet);
-    className = classnames(['lazyload', className]).trim();
+    className = classnames(["lazyload", className]).trim();
     if (iframe) {
       return (
-        <iframe {...other}
-          src={dataSrc ? '' : src}
+        <iframe
+          {...other}
+          src={dataSrc ? "" : src}
           data-src={dataSrc}
-          className={className}></iframe>
+          className={className}
+        ></iframe>
       );
     }
     return (
-      <img {...other}
+      <img
+        {...other}
         src={src}
         data-src={dataSrc}
         data-sizes={dataSizes}
         data-srcset={dataSrcSet}
-        className={className}/>
+        className={className}
+      />
     );
   }
 }
